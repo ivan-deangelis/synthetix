@@ -1,9 +1,29 @@
 import OpenAI from "openai";
 
+/**
+ * OpenAI client instance configured with API key from environment variables.
+ * Used for AI-powered data generation across the application.
+ */
 const OpenAIClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+/**
+ * Generates AI-powered field data using OpenAI's structured output API.
+ * Uses GPT-5-nano model with custom system prompt to generate mock API data.
+ * 
+ * The function:
+ * 1. Sends a structured prompt to OpenAI
+ * 2. Requests data generation based on user requirements and constraints
+ * 3. Returns an array of independent, distinct values (default: 20 items)
+ * 4. Each value is generated independently without dependencies
+ * 
+ * @param field - The name/description of the field being generated
+ * @param aiPrompt - User's description of what to generate
+ * @param aiConstraints - Specific requirements or limitations for the generated data
+ * @returns Promise resolving to an object with a 'result' array of generated strings,
+ *          or null if generation fails
+ */
 export async function generateAIField(
     field: string,
     aiPrompt: string,

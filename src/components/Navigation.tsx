@@ -25,23 +25,33 @@ import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useClerk, useUser } from "@clerk/nextjs";
 
+/**
+ * Navigation - Main navigation component with smooth scrolling and user authentication.
+ */
 const Navigation = () => {
+    // Track scroll state for visual effects
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    // Clerk authentication hooks
     const { user } = useUser();
     const { signOut } = useClerk();
 
+    /**
+     * Handles user sign out with redirect to home page
+     */
     const handleSignOut = async (e?: React.MouseEvent) => {
         e?.preventDefault();
         try {
             await signOut({ redirectUrl: "/" });
         } catch (err) {
-            // noop: optionally add toast here
             console.error("Sign out failed", err);
         }
     };
 
+    /**
+     * Handles smooth scrolling to page sections with offset for fixed header.
+     * Also updates active tab state for visual feedback.
+     */
     const handleSmoothScroll = (
         e: React.MouseEvent<HTMLAnchorElement>,
         url: string
@@ -77,6 +87,7 @@ const Navigation = () => {
         }
     };
 
+    // Set up scroll listener for header styling
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -85,12 +96,7 @@ const Navigation = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const navItems = [
-        { name: "Dashboard", href: "/dashboard" },
-        { name: "Community", href: "/community" },
-        { name: "Docs", href: "/docs" },
-    ];
-
+    // Main navigation sections with icons
     const items = [
         { name: "Home", url: "/", icon: Home },
         { name: "Features", url: "#features", icon: Zap },
@@ -98,18 +104,8 @@ const Navigation = () => {
         { name: "Why Synthetix", url: "#why-synthetix", icon: FileText },
     ];
 
+    // Active tab tracking for visual indicator
     const [activeTab, setActiveTab] = useState(items[0].name);
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
     return (
         <div

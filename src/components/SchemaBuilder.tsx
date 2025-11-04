@@ -14,6 +14,9 @@ import { Cog, Trash2, Plus } from "lucide-react";
 import { FieldSettingsModal } from "@/components/FieldSettingsModal";
 import { Label } from "./ui/label";
 
+/**
+ * Supported field types for schema definition
+ */
 const fieldTypes = [
     "string",
     "number",
@@ -26,11 +29,21 @@ const fieldTypes = [
     "email",
 ];
 
+/**
+ * Props for the SchemaBuilder component
+ */
 interface SchemaBuilderProps {
+    /** Initial schema to populate the builder (for edit mode) */
     initialSchema?: any;
+    /** Callback when schema changes */
     onSchemaChange: (schema: any) => void;
 }
 
+/**
+ * FieldEditor - Internal component for editing individual fields and nested structures.
+ * Handles field creation, type selection, and nested object/array management.
+ * Maximum nesting depth is 3 levels to prevent overly complex schemas.
+ */
 function FieldEditor({
     path,
     onChange,
@@ -42,6 +55,10 @@ function FieldEditor({
     level?: number;
     initialFields?: any[];
 }) {
+    /**
+     * Returns default generation settings based on field type.
+     * Used when creating new fields or changing field types.
+     */
     const getDefaultSettingsForType = (type: string) => {
         if (type === "number") {
             return {
@@ -70,6 +87,8 @@ function FieldEditor({
             additionalOptions: {},
         };
     };
+
+    // Field state with unique IDs for React key management
     const [fields, setFields] = useState<
         {
             id: string;
@@ -98,6 +117,9 @@ function FieldEditor({
         null
     );
 
+    /**
+     * Adds a new empty field to the schema
+     */
     const addField = () => {
         setFields([
             ...fields,
@@ -111,6 +133,9 @@ function FieldEditor({
         ]);
     };
 
+    /**
+     * Handles field type changes and updates default settings accordingly
+     */
     const handleTypeChange = (index: number, newType: string) => {
         const updated = [...fields];
         updated[index].type = newType;
@@ -123,6 +148,9 @@ function FieldEditor({
         onChange(buildSchema(updated));
     };
 
+    /**
+     * Generic field updater for any field property
+     */
     const updateField = (index: number, key: string, value: any) => {
         const updated = [...fields];
         (updated[index] as any)[key] = value;
@@ -130,17 +158,26 @@ function FieldEditor({
         onChange(buildSchema(updated));
     };
 
+    /**
+     * Removes a field from the schema
+     */
     const removeField = (index: number) => {
         const updated = fields.filter((_, i) => i !== index);
         setFields(updated);
         onChange(buildSchema(updated));
     };
 
+    /**
+     * Opens the settings modal for advanced field configuration
+     */
     const openSettingsModal = (index: number) => {
         setSelectedFieldIndex(index);
         setSettingsModalOpen(true);
     };
 
+    /**
+     * Saves settings from the modal and updates the field
+     */
     const handleSettingsSave = (settings: any) => {
         if (selectedFieldIndex !== null) {
             console.log(settings);
@@ -151,6 +188,11 @@ function FieldEditor({
         }
     };
 
+    /**
+     * Recursively builds the schema object from field configurations.
+     * Transforms the internal field representation into the schema format
+     * used by the data generator.
+     */
     const buildSchema = (fields: any[]) => {
         const schema: any = {};
         if (!Array.isArray(fields)) {
@@ -193,7 +235,7 @@ function FieldEditor({
         return schema;
     };
 
-    // Only allow 'object' type if level < 3 (allows 2 levels: top level + 1 nested level)
+    // Only allow 'object' type if level < 3 (max 2 levels of nesting)
     const allowedFieldTypes =
         level < 3 ? fieldTypes : fieldTypes.filter((t) => t !== "object");
 
@@ -254,6 +296,7 @@ function FieldEditor({
                         </Button>
                     </div>
 
+                    {/* Nested object fields - recursive FieldEditor */}
                     {field.type === "object" && level < 3 && (
                         <div className="mt-3 ml-4 border-l-2 border-zinc-200 dark:border-zinc-800 pl-4">
                             <FieldEditor
@@ -355,6 +398,7 @@ function FieldEditor({
                         </div>
                     )}
 
+                    {/* Array configuration - items type and count */}
                     {field.type === "array" && (
                         <div className="mt-3 ml-4 space-y-3">
                             <div className="flex gap-4">
@@ -573,11 +617,17 @@ function FieldEditor({
     );
 }
 
+/**
+ * SchemaBuilder - Main component for building and editing API schemas.
+ */
 export function SchemaBuilder({
     initialSchema,
     onSchemaChange,
 }: SchemaBuilderProps) {
-    // Convert schema to field objects for initialization
+    /**
+     * Converts a schema object back into field editor format.
+     * This is needed to initialize the editor with existing schema data.
+     */
     const convertSchemaToFields = (schema: any) => {
         if (!schema || typeof schema !== "object") return [];
 
@@ -608,11 +658,12 @@ export function SchemaBuilder({
         });
     };
 
+    // Initialize fields from schema
     const [currentFields, setCurrentFields] = useState(() =>
         convertSchemaToFields(initialSchema)
     );
 
-    // Update fields when initialSchema changes (e.g., when switching tabs)
+    // Update fields when initialSchema changes (e.g., switching between different APIs)
     useEffect(() => {
         setCurrentFields(convertSchemaToFields(initialSchema));
     }, [initialSchema]);

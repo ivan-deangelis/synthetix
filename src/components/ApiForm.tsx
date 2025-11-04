@@ -13,12 +13,17 @@ import { SchemaBuilder } from "@/components/SchemaBuilder";
 import { HeadersBuilder } from "@/components/HeadersBuilder";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+/**
+ * Represents a single HTTP header key-value pair
+ */
 type Header = {
     key: string;
     value: string;
 };
 
-// Headers reducer types
+/**
+ * Actions for the headers reducer
+ */
 type HeadersAction =
     | { type: "SET_HEADERS"; payload: Header[] }
     | { type: "ADD_HEADER"; payload: Header }
@@ -29,12 +34,21 @@ type HeadersAction =
     | { type: "REMOVE_HEADER"; payload: number }
     | { type: "CLEAR_HEADERS" };
 
+/**
+ * State managed by the headers reducer
+ */
 type HeadersState = {
+    /** All headers including empty ones being edited */
     headers: Header[];
+    /** Only headers with both key and value filled in */
     validHeaders: Header[];
 };
 
+/**
+ * Props for the ApiForm component
+ */
 interface ApiFormProps {
+    /** Initial data to populate the form (for edit mode) */
     initialData?: {
         name: string;
         description: string;
@@ -42,6 +56,7 @@ interface ApiFormProps {
         schema: any;
         headers?: Header[];
     };
+    /** Callback function when form is submitted */
     onSubmit: (data: {
         name: string;
         description: string;
@@ -49,12 +64,20 @@ interface ApiFormProps {
         schema: any;
         headers: Header[];
     }) => Promise<void>;
+    /** Text to display on the submit button */
     submitButtonText?: string;
+    /** Validation errors to display */
     error?: { [key: string]: string } | null;
+    /** Callback when errors change */
     onErrorChange?: (error: { [key: string]: string } | null) => void;
 }
 
-// Headers reducer
+/**
+ * Reducer function for managing HTTP headers state.
+ * Handles adding, updating, removing headers and maintaining valid headers list.
+ *
+ * Valid headers are those with both key and value filled in.
+ */
 const headersReducer = (
     state: HeadersState,
     action: HeadersAction
@@ -120,6 +143,9 @@ const headersReducer = (
     }
 };
 
+/**
+ * ApiForm - A comprehensive form component for creating and editing API configurations.
+ */
 export function ApiForm({
     initialData,
     onSubmit,
@@ -145,6 +171,10 @@ export function ApiForm({
     const [previewModalOpen, setPreviewModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    /**
+     * Handles form submission.
+     * Manages loading state and error handling.
+     */
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
@@ -162,12 +192,18 @@ export function ApiForm({
         }
     };
 
+    /**
+     * Opens the preview modal if form has valid data
+     */
     const handlePreview = () => {
         if (apiName && Object.keys(schema).length > 0) {
             setPreviewModalOpen(true);
         }
     };
 
+    /**
+     * Clears a specific field error when user starts editing that field
+     */
     const clearError = (field: string) => {
         if (onErrorChange && error) {
             const newError = { ...error };
