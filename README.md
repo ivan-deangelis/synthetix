@@ -77,6 +77,26 @@ Before you begin, ensure you have the following installed:
 
     Navigate to [http://localhost:3000](http://localhost:3000)
 
+## 🐳 Docker Setup
+
+To run the application with using Cloud Supabase:
+
+    ```bash
+    docker-compose up -d
+    ```
+    The app will be available at http://localhost:3000
+
+To run Supabase locally (optional, for development/testing):
+
+    ```bash
+    docker-compose -f docker-compose.supabase.yml up -d
+    ```
+
+    - Database: localhost:54322
+    - API: http://localhost:54321
+    - Auth: http://localhost:9999
+    - Studio: http://localhost:54323
+
 ## 📖 Usage
 
 ### Creating Your First API
