@@ -58,15 +58,9 @@ const ApiCard = ({
         processing: "bg-orange-200 text-orange-800 border-orange-300",
     };
 
-    const handleCopyUrl = () => {
-        navigator.clipboard.writeText(`https://api.creator.com/v1/${name}`);
-    };
-
     const handlePreview = () => {
         setPreviewModalOpen(true);
     };
-
-    console.log(isCreator);
 
     return (
         <div className="card-interactive electric-border group">
@@ -128,9 +122,6 @@ const ApiCard = ({
                                 </Link>
                             </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={handleCopyUrl}>
-                            Copy URL
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         {isCreator && (
                             <DropdownMenuItem
@@ -191,14 +182,6 @@ const ApiCard = ({
                 </Button>
                 <Button variant="outline" size="sm" onClick={handlePreview}>
                     <Eye className="h-4 w-4" />
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                    <Link href={`/test/${name}`}>
-                        <Play className="h-4 w-4" />
-                    </Link>
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleCopyUrl}>
-                    <Copy className="h-4 w-4" />
                 </Button>
             </div>
 

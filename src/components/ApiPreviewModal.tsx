@@ -110,64 +110,6 @@ export function ApiPreviewModal({
     onOpenChange,
     apiSet,
 }: ApiPreviewModalProps) {
-    const [mockData, setMockData] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [recordCount, setRecordCount] = useState(1);
-
-    useEffect(() => {
-        if (open) {
-            setIsLoading(true);
-            generatePreview();
-        } else {
-            setMockData(null);
-            setIsLoading(false);
-        }
-    }, [open, apiSet.schema]);
-
-    // Regenerate when record count changes while open
-    useEffect(() => {
-        if (open && apiSet.schema) {
-            generatePreview();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [recordCount]);
-
-    const generatePreview = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            const data = mockDataGenerator.generateMockData(
-                apiSet.schema,
-                recordCount
-            );
-            setMockData(data);
-            setIsLoading(false);
-        }, 500);
-    };
-
-    const handleCopyJson = () => {
-        if (mockData) {
-            navigator.clipboard.writeText(JSON.stringify(mockData, null, 2));
-        }
-    };
-
-    const handleDownloadJson = () => {
-        if (mockData) {
-            const blob = new Blob([JSON.stringify(mockData, null, 2)], {
-                type: "application/json",
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${apiSet.name
-                .toLowerCase()
-                .replace(/\s+/g, "-")}-preview.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    };
-
     const getStatusColor = (status: string) => {
         switch (status) {
             case "active":
@@ -242,15 +184,8 @@ export function ApiPreviewModal({
                 </DialogHeader>
 
                 <div className="flex-1 overflow-hidden">
-                    <Tabs defaultValue="preview" className="h-full">
-                        <TabsList className="grid w-full grid-cols-4">
-                            <TabsTrigger
-                                value="preview"
-                                className="flex items-center space-x-2"
-                            >
-                                <Eye className="h-4 w-4" />
-                                <span>Preview</span>
-                            </TabsTrigger>
+                    <Tabs defaultValue="schema" className="h-full">
+                        <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger
                                 value="schema"
                                 className="flex items-center space-x-2"
@@ -273,124 +208,6 @@ export function ApiPreviewModal({
                                 <span>Endpoint</span>
                             </TabsTrigger>
                         </TabsList>
-
-                        <TabsContent value="preview" className="h-full mt-4">
-                            <Card className="h-full">
-                                <CardHeader>
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-lg">
-                                            API Response Preview
-                                        </CardTitle>
-                                        <div className="flex items-center space-x-2">
-                                            <div className="flex items-center space-x-2">
-                                                <span className="text-sm text-muted-foreground">
-                                                    Records:
-                                                </span>
-                                                <select
-                                                    value={recordCount}
-                                                    onChange={(e) =>
-                                                        setRecordCount(
-                                                            Number(
-                                                                e.target.value
-                                                            )
-                                                        )
-                                                    }
-                                                    className="px-2 py-1 text-sm border rounded-md"
-                                                >
-                                                    <option value={1}>1</option>
-                                                    <option value={5}>5</option>
-                                                    <option value={10}>
-                                                        10
-                                                    </option>
-                                                    <option value={25}>
-                                                        25
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={generatePreview}
-                                                disabled={isLoading}
-                                            >
-                                                <RefreshCw
-                                                    className={`h-4 w-4 ${
-                                                        isLoading
-                                                            ? "animate-spin"
-                                                            : ""
-                                                    }`}
-                                                />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="h-full">
-                                    <ScrollArea className="h-[400px] w-full">
-                                        {isLoading ? (
-                                            <div className="flex items-center justify-center h-full">
-                                                <div className="text-center">
-                                                    <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-2 text-muted-foreground" />
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Generating preview...
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ) : mockData ? (
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center space-x-2">
-                                                        <Badge variant="secondary">
-                                                            GET
-                                                        </Badge>
-                                                        <span className="text-sm text-muted-foreground">
-                                                            /api/v1/{apiSet.id}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={
-                                                                handleCopyJson
-                                                            }
-                                                        >
-                                                            <Copy className="h-4 w-4 mr-2" />
-                                                            Copy JSON
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={
-                                                                handleDownloadJson
-                                                            }
-                                                        >
-                                                            <Download className="h-4 w-4 mr-2" />
-                                                            Download
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                                <Separator />
-                                                <pre className="bg-muted/50 rounded-lg p-4 text-sm overflow-auto max-h-[300px]">
-                                                    <code>
-                                                        {JSON.stringify(
-                                                            mockData,
-                                                            null,
-                                                            2
-                                                        )}
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center text-muted-foreground">
-                                                <Database className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                                <p>No preview available</p>
-                                            </div>
-                                        )}
-                                    </ScrollArea>
-                                </CardContent>
-                            </Card>
-                        </TabsContent>
-
                         <TabsContent value="schema" className="h-full mt-4">
                             <Card className="h-full">
                                 <CardHeader>
