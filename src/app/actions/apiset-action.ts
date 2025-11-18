@@ -88,26 +88,36 @@ function schemaHasAI(schema: Schema): boolean {
 }
 
 export async function createApiSet(apiSet: Omit<ApiSet, "id">) {
+    console.log("=== createApiSet called ===");
+    console.log("Input:", JSON.stringify(apiSet, null, 2));
+    
     const validatedApiSet = createApiSetSchema.safeParse(apiSet);
 
     if (!validatedApiSet.success) {
+        console.error("Validation failed:", validatedApiSet.error);
         return {
             error: validatedApiSet.error.message,
             success: false,
         };
     }
 
+    console.log("Validation passed");
+
     const supabase = await createServerSupabaseClient();
+    console.log("Supabase client created");
 
     const { userId } = await auth();
+    console.log("User ID:", userId);
 
     if (!userId) {
+        console.error("No user ID found");
         return {
             error: "User not found",
             success: false,
         };
     }
 
+    console.log("Attempting to insert into database...");
     const { data, error } = await supabase
         .from("api_sets")
         .insert({
@@ -123,11 +133,15 @@ export async function createApiSet(apiSet: Omit<ApiSet, "id">) {
         .single();
 
     if (error || !data) {
+        console.error("Supabase insert error:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
         return {
             error: error?.message || "Failed to create API Set",
             success: false,
         };
     }
+
+    console.log("Insert successful, data:", data);
 
     if (apiSet.schema) {
         const { success, data: builtData } = await SchemaBuilder.build(

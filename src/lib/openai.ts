@@ -1,12 +1,28 @@
 import OpenAI from "openai";
 
 /**
- * OpenAI client instance configured with API key from environment variables.
- * Used for AI-powered data generation across the application.
+ * Lazy-initialized OpenAI client instance.
+ * Only instantiated when actually needed to avoid build-time errors.
  */
-const OpenAIClient = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+let openAIClientInstance: OpenAI | null = null;
+
+/**
+ * Gets or creates the OpenAI client instance.
+ * @throws Error if OPENAI_API_KEY is not set when the client is needed
+ */
+function getOpenAIClient(): OpenAI {
+    if (!openAIClientInstance) {
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error(
+                "Missing credentials. Please pass an `apiKey`, or set the `OPENAI_API_KEY` environment variable."
+            );
+        }
+        openAIClientInstance = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    return openAIClientInstance;
+}
 
 /**
  * Generates AI-powered field data using OpenAI's structured output API.
@@ -29,6 +45,8 @@ export async function generateAIField(
     aiPrompt: string,
     aiConstraints: string,
 ): Promise<{ result: string[] } | null> {
+    const OpenAIClient = getOpenAIClient();
+    
     const response = await OpenAIClient.responses.parse({
         model: "gpt-5-nano",
         input: [
