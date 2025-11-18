@@ -102,6 +102,9 @@ const ViewPageClient = ({ apiSet, isOwner = false }: ViewPageClientProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setTitleOverride } = useHeaderTitle();
+  const baseUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "");
   const [mockData, setMockData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [recordCount, setRecordCount] = useState(1);
@@ -638,8 +641,8 @@ const ViewPageClient = ({ apiSet, isOwner = false }: ViewPageClientProps) => {
                 <div className="flex items-center space-x-2">
                   <code className="bg-muted/50 rounded px-3 py-2 text-sm flex-1 font-mono">
                     {recordCount > 1
-                      ? `http://localhost:3000/api/v1/set/${apiSet.id}?count=${recordCount}`
-                      : `http://localhost:3000/api/v1/set/${apiSet.id}`}
+                      ? `${baseUrl}/api/v1/set/${apiSet.id}?count=${recordCount}`
+                      : `${baseUrl}/api/v1/set/${apiSet.id}`}
                   </code>
                   <Button
                     variant="outline"
@@ -647,8 +650,8 @@ const ViewPageClient = ({ apiSet, isOwner = false }: ViewPageClientProps) => {
                     onClick={() =>
                       navigator.clipboard.writeText(
                         recordCount > 1
-                          ? `http://localhost:3000/api/v1/set/${apiSet.id}?count=${recordCount}`
-                          : `http://localhost:3000/api/v1/set/${apiSet.id}`
+                          ? `${baseUrl}/api/v1/set/${apiSet.id}?count=${recordCount}`
+                          : `${baseUrl}/api/v1/set/${apiSet.id}`
                       )
                     }
                   >
@@ -702,8 +705,8 @@ const ViewPageClient = ({ apiSet, isOwner = false }: ViewPageClientProps) => {
                     <pre className="block bg-background/50 rounded px-2 py-2 overflow-x-auto text-xs font-mono">
                       {`curl -X GET "${
                         recordCount > 1
-                          ? `http://localhost:3000/api/v1/set/${apiSet.id}?count=${recordCount}`
-                          : `http://localhost:3000/api/v1/set/${apiSet.id}`
+                          ? `${baseUrl}/api/v1/set/${apiSet.id}?count=${recordCount}`
+                          : `${baseUrl}/api/v1/set/${apiSet.id}`
                       }"`}
                     </pre>
                   </div>
