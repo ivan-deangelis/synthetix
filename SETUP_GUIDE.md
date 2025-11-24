@@ -206,7 +206,6 @@ OPENAI_API_KEY=sk-proj-...
 
 - Never commit `.env` to version control (it's in `.gitignore`)
 - Never share your `OPENAI_API_KEY` or `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- The `NEXT_PUBLIC_SUPABASE_ANON_KEY` is safe for client-side use (RLS policies protect data)
 
 ---
 
