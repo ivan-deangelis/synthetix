@@ -274,12 +274,6 @@ Follow these steps to verify everything works:
 ```bash
 # Run all tests
 npm test
-
-# Run in watch mode
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
 ```
 
 ---
