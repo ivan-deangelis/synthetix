@@ -1,0 +1,35 @@
+export const FAKER_TYPES = {
+  string: [
+    { label: 'First Name', value: 'person.firstName' },
+    { label: 'Last Name', value: 'person.lastName' },
+    { label: 'Full Name', value: 'person.fullName' },
+    { label: 'Email', value: 'internet.email' },
+    { label: 'Phone Number', value: 'phone.number' },
+    { label: 'Address', value: 'location.streetAddress' },
+    { label: 'City', value: 'location.city' },
+    { label: 'Country', value: 'location.country' },
+    { label: 'Zip Code', value: 'location.zipCode' },
+    { label: 'Company Name', value: 'company.name' },
+    { label: 'Job Title', value: 'person.jobTitle' },
+    { label: 'Product Name', value: 'commerce.productName' },
+    { label: 'Product Description', value: 'commerce.productDescription' },
+    { label: 'Paragraph', value: 'lorem.paragraph' },
+    { label: 'Sentence', value: 'lorem.sentence' },
+    { label: 'Word', value: 'lorem.word' },
+    { label: 'UUID', value: 'string.uuid' },
+    { label: 'Image URL', value: 'image.url' },
+    { label: 'Avatar URL', value: 'image.avatar' },
+    { label: 'URL', value: 'internet.url' },
+  ],
+  number: [
+    { label: 'Random Number (0-1000)', value: 'number.int' },
+    { label: 'Price', value: 'commerce.price' },
+    { label: 'Age (18-90)', value: 'person.age' },
+    { label: 'Year (Past)', value: 'date.pastYear' },
+    { label: 'Latitude', value: 'location.latitude' },
+    { label: 'Longitude', value: 'location.longitude' },
+  ],
+  boolean: [
+    { label: 'Boolean', value: 'datatype.boolean' },
+  ]
+};
