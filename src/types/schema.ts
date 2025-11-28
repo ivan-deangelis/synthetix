@@ -11,7 +11,6 @@ export interface SchemaField {
   // For arrays
   arrayItemType?: FieldType;
   // For specific data generation
-  // For specific data generation
   fakerType?: string;
   aiInstruction?: string;
 }
